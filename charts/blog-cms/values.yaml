@@ -2,7 +2,7 @@ backend:
   replicaCount: 1
   image:
     repository: docker.io/dzanak/blog-cms-backend
-    tag: "0.0.1"
+    tag: "246fd3aa0d555dc2591ae2ff62979b6a660f425a"
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -18,12 +18,11 @@ backend:
     runAsNonRoot: true
     runAsUser: 1000
     readOnlyRootFilesystem: true
-
 frontend:
   replicaCount: 1
   image:
     repository: docker.io/dzanak/blog-cms-frontend
-    tag: "0.0.1"
+    tag: "246fd3aa0d555dc2591ae2ff62979b6a660f425a"
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -39,7 +38,6 @@ frontend:
     runAsNonRoot: true
     runAsUser: 101
     readOnlyRootFilesystem: true
-
 postgresql:
   image:
     repository: postgres
@@ -62,12 +60,10 @@ postgresql:
     runAsNonRoot: true
     runAsUser: 999
     readOnlyRootFilesystem: true
-
 ingress:
   enabled: true
   className: "nginx"
   host: blog.local
-
 resourceQuota:
   requestsCpu: "2"
   requestsMemory: 2Gi
@@ -75,7 +71,6 @@ resourceQuota:
   limitsMemory: 4Gi
   pods: "10"
   persistentvolumeclaims: "3"
-
 hpa:
   minReplicas: 2
   maxReplicas: 5
