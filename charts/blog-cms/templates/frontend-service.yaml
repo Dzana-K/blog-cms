@@ -9,4 +9,4 @@ spec:
     app: blog-cms-frontend
   ports:
     - port: {{ .Values.frontend.service.port }}
-      targetPort: 80
+      targetPort: 8080
