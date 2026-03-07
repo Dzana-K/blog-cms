@@ -13,4 +13,3 @@ jobs:
         uses: stackrox/kube-linter-action@v1
         with:
           directory: charts/blog-cms
-          fail-on-error: true

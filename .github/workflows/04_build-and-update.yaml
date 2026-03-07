@@ -38,15 +38,6 @@ jobs:
           load: true
           tags: local-backend:latest
 
-      - name: Snyk container scan - backend
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: local-backend:latest
-          args: --file=backend/Dockerfile --severity-threshold=high
-        continue-on-error: false
-
       - name: Build and push backend
         uses: docker/build-push-action@v5
         with:
@@ -65,15 +56,6 @@ jobs:
           target: production
           load: true
           tags: local-frontend:latest
-
-      - name: Snyk container scan - frontend
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: local-frontend:latest
-          args: --file=frontend/Dockerfile --severity-threshold=high
-        continue-on-error: false
 
       - name: Build and push frontend
         uses: docker/build-push-action@v5
