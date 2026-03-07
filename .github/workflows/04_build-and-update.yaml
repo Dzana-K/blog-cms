@@ -7,8 +7,6 @@ on:
         required: true
       DOCKER_PASSWORD:
         required: true
-      SNYK_TOKEN:
-        required: true
 
 permissions:
   contents: write
@@ -26,43 +24,32 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       # --- BACKEND ---
-      - name: Build backend image (local)
-        uses: docker/build-push-action@v5
-        with:
-          context: backend
-          target: production
-          load: true
-          tags: local-backend:latest
-
       - name: Build and push backend
         uses: docker/build-push-action@v5
         with:
           context: backend
           target: production
           push: true
+          platforms: linux/amd64,linux/arm64/v8
           tags: |
             dzanak/blog-cms-backend:${{ github.sha }}
             dzanak/blog-cms-backend:latest
 
       # --- FRONTEND ---
-      - name: Build frontend image (local)
-        uses: docker/build-push-action@v5
-        with:
-          context: frontend
-          target: production
-          load: true
-          tags: local-frontend:latest
-
       - name: Build and push frontend
         uses: docker/build-push-action@v5
         with:
           context: frontend
           target: production
           push: true
+          platforms: linux/amd64,linux/arm64/v8
           tags: |
             dzanak/blog-cms-frontend:${{ github.sha }}
             dzanak/blog-cms-frontend:latest

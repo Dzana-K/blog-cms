@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: blog-cms-postgresql
+  annotations:
+    ignore-check.kube-linter.io/run-as-non-root: "Official PostgreSQL image requires root for initialization then drops to postgres user"
   labels:
     app: blog-cms-postgresql
     {{- include "blog-cms.labels" . | nindent 4 }}
@@ -16,6 +18,8 @@ spec:
       labels:
         app: blog-cms-postgresql
     spec:
+      securityContext:
+        {{- toYaml .Values.postgresql.podSecurityContext | nindent 8 }}
       containers:
         - name: postgresql
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
