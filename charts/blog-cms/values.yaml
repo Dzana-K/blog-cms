@@ -2,21 +2,43 @@ backend:
   replicaCount: 1
   image:
     repository: docker.io/dzanak/blog-cms-backend
-    tag: "latest"
+    tag: "0.0.1"
     pullPolicy: Always
   service:
     type: ClusterIP
     port: 4000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    readOnlyRootFilesystem: true
 
 frontend:
   replicaCount: 1
   image:
     repository: docker.io/dzanak/blog-cms-frontend
-    tag: "latest"
+    tag: "0.0.1"
     pullPolicy: Always
   service:
     type: ClusterIP
     port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    readOnlyRootFilesystem: true
 
 postgresql:
   image:
@@ -29,6 +51,17 @@ postgresql:
     database: blogdb
     username: bloguser
     password: blogpass
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    readOnlyRootFilesystem: true
 
 ingress:
   enabled: true

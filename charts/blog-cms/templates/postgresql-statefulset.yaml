@@ -24,9 +24,17 @@ spec:
           envFrom:
             - secretRef:
                 name: blog-cms-db-secret
+          resources:
+            {{- toYaml .Values.postgresql.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.postgresql.securityContext | nindent 12 }}
           volumeMounts:
             - name: postgresql-data
               mountPath: /var/lib/postgresql/data
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.postgresql.auth.username | quote }}]
@@ -41,3 +49,7 @@ spec:
         - name: postgresql-data
           persistentVolumeClaim:
             claimName: blog-cms-postgresql-pvc
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

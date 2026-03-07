@@ -27,6 +27,13 @@ spec:
                 name: blog-cms-config
             - secretRef:
                 name: blog-cms-db-secret
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.backend.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /api/health
@@ -39,3 +46,6 @@ spec:
               port: 4000
             initialDelaySeconds: 15
             periodSeconds: 10
+      volumes:
+        - name: tmp
+          emptyDir: {}
