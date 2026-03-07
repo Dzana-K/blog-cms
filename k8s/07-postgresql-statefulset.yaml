@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: blog-cms-postgresql
   namespace: blog-cms
+  annotations:
+    ignore-check.kube-linter.io/run-as-non-root: "Official PostgreSQL image requires root for initialization then drops to postgres user"
   labels:
     app: blog-cms-postgresql
 spec:
@@ -17,8 +19,6 @@ spec:
         app: blog-cms-postgresql
     spec:
       securityContext:
-        runAsUser: 999
-        runAsGroup: 999
         fsGroup: 999
       containers:
         - name: postgresql
@@ -35,9 +35,15 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: postgresql-data
               mountPath: /var/lib/postgresql/data
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "bloguser"]
@@ -52,3 +58,7 @@ spec:
         - name: postgresql-data
           persistentVolumeClaim:
             claimName: blog-cms-postgresql-pvc
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

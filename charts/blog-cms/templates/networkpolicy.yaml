@@ -78,7 +78,7 @@ spec:
             matchLabels:
               kubernetes.io/metadata.name: ingress-nginx
       ports:
-        - port: {{ .Values.frontend.service.port }}
+        - port: {{ .Values.frontend.containerPort }}
   egress:
     - to:
         - podSelector:

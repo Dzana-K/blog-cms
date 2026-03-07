@@ -24,6 +24,7 @@ frontend:
     repository: docker.io/dzanak/blog-cms-frontend
     tag: "c778cebd3608c661b35d7f60f2e91b64a60f777f"
     pullPolicy: Always
+  containerPort: 8080
   service:
     type: ClusterIP
     port: 80
