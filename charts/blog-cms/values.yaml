@@ -1,0 +1,49 @@
+backend:
+  replicaCount: 1
+  image:
+    repository: docker.io/dzanak/blog-cms-backend
+    tag: "latest"
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 4000
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: docker.io/dzanak/blog-cms-frontend
+    tag: "latest"
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 80
+
+postgresql:
+  image:
+    repository: postgres
+    tag: 15-alpine
+  storage:
+    size: 1Gi
+    storageClass: local-path
+  auth:
+    database: blogdb
+    username: bloguser
+    password: blogpass
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: blog.local
+
+resourceQuota:
+  requestsCpu: "2"
+  requestsMemory: 2Gi
+  limitsCpu: "4"
+  limitsMemory: 4Gi
+  pods: "10"
+  persistentvolumeclaims: "3"
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilization: 70

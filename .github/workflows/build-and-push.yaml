@@ -1,0 +1,59 @@
+name: Build, Push, and Update Chart
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'blog-cms/backend/**'
+      - 'blog-cms/frontend/**'
+    paths-ignore:
+      - 'blog-cms/charts/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: blog-cms/backend
+          target: production
+          push: true
+          tags: |
+            dzanak/blog-cms-backend:${{ github.sha }}
+            dzanak/blog-cms-backend:latest
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: blog-cms/frontend
+          target: production
+          push: true
+          tags: |
+            dzanak/blog-cms-frontend:${{ github.sha }}
+            dzanak/blog-cms-frontend:latest
+
+      - name: Update Helm chart image tags
+        run: |
+          yq -i '.backend.image.tag = "${{ github.sha }}"' blog-cms/charts/blog-cms/values.yaml
+          yq -i '.frontend.image.tag = "${{ github.sha }}"' blog-cms/charts/blog-cms/values.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add blog-cms/charts/blog-cms/values.yaml
+          git commit -m "Update image tags to ${{ github.sha }} [skip ci]"
+          git push

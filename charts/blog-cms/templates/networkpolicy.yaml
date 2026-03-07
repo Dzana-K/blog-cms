@@ -1,0 +1,98 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+  labels:
+    {{- include "blog-cms.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: blog-cms-backend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: blog-cms-frontend
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: {{ .Values.backend.service.port }}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: blog-cms-postgresql
+      ports:
+        - port: 5432
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgresql-policy
+  labels:
+    {{- include "blog-cms.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: blog-cms-postgresql
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: blog-cms-backend
+      ports:
+        - port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-policy
+  labels:
+    {{- include "blog-cms.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: blog-cms-frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: {{ .Values.frontend.service.port }}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: blog-cms-backend
+      ports:
+        - port: {{ .Values.backend.service.port }}
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP

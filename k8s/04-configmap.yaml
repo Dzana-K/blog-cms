@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blog-cms-config
+  namespace: blog-cms
+data:
+  DB_HOST: "blog-cms-postgresql"
+  DB_PORT: "5432"
+  PORT: "4000"
+  NODE_ENV: "production"

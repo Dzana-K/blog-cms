@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: blog-cms-postgresql-pvc
+  labels:
+    {{- include "blog-cms.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.postgresql.storage.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.storage.size }}

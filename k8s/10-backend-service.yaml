@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-cms-backend
+  namespace: blog-cms
+spec:
+  selector:
+    app: blog-cms-backend
+  ports:
+    - port: 4000
+      targetPort: 4000

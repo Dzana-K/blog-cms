@@ -1,0 +1,62 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: blog-db
+    restart: always
+    environment:
+      POSTGRES_USER: bloguser
+      POSTGRES_PASSWORD: blogpass
+      POSTGRES_DB: blogdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: blog-backend
+    command: sh -c "npm install && npm run dev"
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+      - backend_modules:/workspace/node_modules
+    ports:
+      - "4000:4000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=blogdb
+      - DB_USER=bloguser
+      - DB_PASS=blogpass
+      - PORT=4000
+      - NODE_ENV=development
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: blog-frontend
+    command: sh -c "npm install && npm start"
+    working_dir: /workspace
+    volumes:
+      - ./frontend:/workspace
+      - frontend_modules:/workspace/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:4000/api
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+  backend_modules:
+  frontend_modules:
