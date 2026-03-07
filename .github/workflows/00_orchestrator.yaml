@@ -1,0 +1,30 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'charts/**'
+
+jobs:
+  call-scan:
+    uses: ./.github/workflows/01_sonarqube-scan.yaml
+    secrets: inherit
+
+  call-snyk:
+    uses: ./.github/workflows/02_snyk-scan.yaml
+    secrets: inherit
+
+  call-kubelinter:
+    uses: ./.github/workflows/03_kubelinter-scan.yaml
+    secrets: inherit
+
+  call-build:
+    needs:
+      - call-scan
+      - call-snyk
+      - call-kubelinter
+    permissions: write-all
+    uses: ./.github/workflows/04_build-and-update.yaml
+    secrets: inherit

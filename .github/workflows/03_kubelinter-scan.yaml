@@ -1,0 +1,16 @@
+name: KubeLinter Scan
+
+on:
+  workflow_call:
+
+jobs:
+  kube-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan Helm Chart with KubeLinter
+        uses: stackrox/kube-linter-action@v1
+        with:
+          directory: charts/blog-cms
+          fail-on-error: true
