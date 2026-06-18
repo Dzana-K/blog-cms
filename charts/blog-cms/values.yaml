@@ -2,7 +2,7 @@ backend:
   replicaCount: 1
   image:
     repository: docker.io/dzanak/blog-cms-backend
-    tag: "89f15c0949ed544ba2fe9c7d7757d859f9787998"
+    tag: "0f57651d32106c1446d12a70a8cbe990450a5a87"
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -22,7 +22,7 @@ frontend:
   replicaCount: 1
   image:
     repository: docker.io/dzanak/blog-cms-frontend
-    tag: "89f15c0949ed544ba2fe9c7d7757d859f9787998"
+    tag: "0f57651d32106c1446d12a70a8cbe990450a5a87"
     pullPolicy: Always
   containerPort: 8080
   service:
