@@ -36,7 +36,7 @@ function HomePage() {
   return (
     <div>
       <div className="page-header">
-        <h1>Blog V2</h1>
+        <h1>Blog V3</h1>
       </div>
 
       <div className="filter-bar">
