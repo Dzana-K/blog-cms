@@ -3,9 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
-    paths-ignore:
-      - 'charts/**'
+       - main
+    # paths-ignore:
+    #   - 'charts/**'
 
 jobs:
   call-scan:
